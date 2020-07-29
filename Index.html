@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+  <meta name="description" content="The Community Currency Role Play digital game">
+  <meta name="author" content="Tom Buurmans & Lachlan Keene">
+
+  <title>The Community Currency Role Play</title>
+
+  <script src='assets/lib/jquery/jquery.js'></script>
+  <script src='assets/lib/bootstrap/js/bootstrap.js'></script>
+  <link href="assets/lib/bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet">
+  <script src='assets/lib/jquery-ui/jquery-ui.js'></script>
+  <link href="assets/lib/jquery-ui/jquery-ui.css" type="text/css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/lib/font-awesome/css/font-awesome.min.css">
+
+  <link href="assets/css/index.css" type="text/css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header>
+    </header>
+
+    <main role="main">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-2">
+                    <h4 class="text-center">Community Reserves</h4>
+                    <div id="communityFunds" class="d-flex justify-content-center">
+                        <div class="outer">
+                            <div class="inner" data-progress="100%">
+                                <div></div>
+                            </div>        
+                        </div>
+                    </div>
+                    <h4 class="text-center mt-3">You</h4>
+                    <div id="tailor" class="d-flex flex-column justify-content-center">
+                        <div class="d-flex justify-content-around">
+                            <img class="position-absolute" src="./assets/images/clothes-design-tape-measure.png" style="margin-top: 50px;" />
+                            <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                        </div>
+                        <p class="text-center">Tailor</p>
+                    </div>
+                </div>
+                <div id="mainDisplay" class="col-10">
+                    <div class="">
+                        <h2 class="text-center">Round <span id="round"></span><i class="fa fa-question-circle-o" style="font-size: 0.5em;" aria-hidden="true"></i></h2>
+                    </div>
+                    <div id="selectedMember" style="display: none;">
+                        <div class="position-absolute float-left">
+                            <i id="back" class="fa fa-angle-double-left fa-3x" aria-hidden="true"></i>
+                        </div>
+                        <h5 class="text-center mt-5" id="selectedTitle"></h5>
+                        <div class="d-flex justify-content-around">
+                            <img id="selectedIcon" class="position-absolute" style="margin-top: 85px;" />
+                            <i class="fa fa-user-circle fa-5x m-auto" style="font-size: 8em;" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div id="round1Members" class="d-flex justify-content-around flex-wrap">
+                        <div id="vegetableFarmer" data-name="Vegetable Farmer" data-icon="farming-farmer" class="user-icon">
+                            <p class="text-center p-0 m-auto">Vegetable Farmer</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/farming-farmer.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="riceFarmer" data-name="Rice Farmer" data-icon="farming-wheat" class="user-icon">
+                            <p class="text-center p-0 m-auto">Rice Farmer</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/farming-wheat.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="foodVendor" data-name="Food Vendor" data-icon="bread-loaf" class="user-icon">
+                            <p class="text-center p-0 m-auto">Food Vendor</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/bread-loaf.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="herbalDoctor" data-name="Herbal Doctor" data-icon="hospital-first-aid" class="user-icon">
+                            <p class="text-center p-0 m-auto">Herbal Doctor</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/hospital-first-aid.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="labourer" data-name="Labourer" data-icon="safety-helmet" class="user-icon">
+                            <p class="text-center p-0 m-auto">Labourer</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/safety-helmet.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="weaver" data-name="Weaver" data-icon="material-fabric" class="user-icon">
+                            <p class="text-center p-0 m-auto">Weaver</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/material-fabric.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="fisher" data-name="Fisher" data-icon="fishing-fish" class="user-icon">
+                            <p class="text-center p-0 m-auto">Fisher</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/fishing-fish.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="homemaker" data-name="Homemaker" data-icon="chef-gear-apron" class="user-icon">
+                            <p class="text-center p-0 m-auto">Homemaker</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/chef-gear-apron.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="fruitFarmer" data-name="Fruit Farmer" data-icon="fruit-apple" class="user-icon">
+                            <p class="text-center p-0 m-auto">Fruit Farmer</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/fruit-apple.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="mechanic" data-name="Mechanic" data-icon="tools-wench" class="user-icon">
+                            <p class="text-center p-0 m-auto">Mechanic</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/tools-wench.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="merchant" data-name="Merchant" data-icon="shop-sale-1" class="user-icon">
+                            <p class="text-center p-0 m-auto">Merchant</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/shop-sale-1.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="moneyLender" data-name="Money Lender" data-icon="money-atm" class="user-icon">
+                            <p class="text-center p-0 m-auto">Money Lender</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/money-atm.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div id="outsider" data-name="Outsider" data-icon="single-man-profile-picture" class="user-icon">
+                            <p class="text-center p-0 m-auto">Outsider</p>
+                            <div class="d-flex justify-content-around">
+                                <img class="position-absolute" src="./assets/images/single-man-profile-picture.png" style="margin-top: 50px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="round2Members" class="justify-content-around flex-wrap" style="display: none;">
+                        <div ></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <footer class="fixed-bottom bg-white border border-dark">
+        <button class="border-0 bg-white p-0 mr-1 float-right" type="button" data-toggle="collapse" data-target=".collapse-panel" aria-expanded="false" aria-controls="collapseFunds collapseObjectives collapseAcquired">
+            <i id="collapseIcon" class="fa fa-chevron-up fa-2x" aria-hidden="true"></i>
+        </button>
+        <div class="row p-3">
+            <div class="col-4 p-2 border border-dark">
+                <h5 class="text-center">Funds</h5>
+                <div class="collapse-panel collapse" id="collapseFunds">
+                    <div class="p-5"></div>
+                </div>
+            </div>
+            <div class="col-4 p-2 border border-dark">
+                <h5 class="text-center">Objectives</h5>
+                <div class="collapse-panel collapse" id="collapseObjectives">
+                    <div class="p-5"></div>
+                </div>
+            </div>
+            <div class="col-4 p-2 border border-dark">
+                <h5 class="text-center">Acquired</h5>
+                <div class="collapse-panel collapse" id="collapseAcquired">
+                    <div class="p-5"></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+<script>
+    var round = 1;
+
+    $(document).ready(function (){
+        $('#round').text(round);
+
+        var skillBar = $("#communityFunds .inner");
+        var skillVal = skillBar.attr("data-progress");
+        $(skillBar).animate({
+            height: skillVal
+        }, 1500);
+
+        $('#collapseFunds').on('show.bs.collapse', function () {
+            $('#collapseIcon').removeClass('fa-chevron-up');
+            $('#collapseIcon').addClass('fa-chevron-down');
+        });
+        $('#collapseFunds').on('hide.bs.collapse', function () {
+            $('#collapseIcon').addClass('fa-chevron-up');
+            $('#collapseIcon').removeClass('fa-chevron-down');
+        });
+
+        $('.user-icon').click(function(){
+            $('#selectedTitle').text($(this).data('name'));
+            $('#selectedIcon').attr('src', './assets/images/'+$(this).data('icon')+'.png');
+            $('#round'+round+'Members').hide();
+            $('#round'+round+'Members').removeClass('d-flex');
+            $('#selectedMember').show("slide", { direction: "left" }, 500);
+        });
+
+        $('#back').click(function(){
+            $('#selectedMember').hide("slide", { direction: "left" }, 500, function() {
+                $('#round'+round+'Members').show();
+                $('#round'+round+'Members').addClass('d-flex');
+            });
+        });
+    });
+</script>

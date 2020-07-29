@@ -1,0 +1,38 @@
+.user-icon {
+    padding: 3em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Vertical progress bar style START */
+.outer {
+    margin: 1em;
+    width: 60px;
+    height: 350px;
+    border: 3px solid #ccc;
+    overflow: hidden;
+    
+    position: relative;
+    
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.inner, .inner div {
+    width: 100%;
+    overflow: hidden;
+    left: -2px;
+    position: absolute;
+}
+
+.inner {
+    border: 2px solid green;
+    border-top-width: 0;
+    background-color: green;
+    
+    bottom: 0;
+    height: 0%;
+}
+/* Vertical progress bar style END */
