@@ -3,21 +3,37 @@
 
 <head>
 
-  <meta charset="utf-8">
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
-  <meta name="description" content="The Community Currency Role Play digital game">
-  <meta name="author" content="Tom Buurmans & Lachlan Keene">
+    <meta charset="utf-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+    <meta name="description" content="The Community Currency Role Play digital game">
+    <meta name="author" content="Tom Buurmans & Lachlan Keene">
 
-  <title>The Community Currency Role Play</title>
+    <title>The Community Currency Role Play</title>
 
-  <script src='assets/lib/jquery/jquery.js'></script>
-  <script src='assets/lib/bootstrap/js/bootstrap.js'></script>
-  <link href="assets/lib/bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet">
-  <script src='assets/lib/jquery-ui/jquery-ui.js'></script>
-  <link href="assets/lib/jquery-ui/jquery-ui.css" type="text/css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/lib/font-awesome/css/font-awesome.min.css">
+    <script src='assets/lib/jquery/jquery.js'></script>
+    <script src='assets/lib/bootstrap/js/bootstrap.js'></script>
+    <link href="assets/lib/bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet">
+    <script src='assets/lib/jquery-ui/jquery-ui.js'></script>
+    <link href="assets/lib/jquery-ui/jquery-ui.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/lib/font-awesome/css/font-awesome.min.css">
 
-  <link href="assets/css/index.css" type="text/css" rel="stylesheet">
+    <!--draggable https://github.com/Shopify/draggable-->
+    <!-- Entire bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.bundle.js"></script>
+    <!-- legacy bundle for older browsers (IE11) -->
+    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.bundle.legacy.js"></script>
+    <!-- Draggable only -->
+    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.js"></script>
+    <!-- Sortable only -->
+    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/sortable.js"></script>
+    <!-- Droppable only -->
+    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/droppable.js"></script>
+    <!-- Swappable only -->
+    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/swappable.js"></script>
+    <!-- Plugins only -->
+    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/plugins.js"></script>
+
+    <link href="assets/css/index.css" type="text/css" rel="stylesheet">
 
 </head>
 
@@ -57,8 +73,39 @@
                         </div>
                         <h5 class="text-center mt-5" id="selectedTitle"></h5>
                         <div class="d-flex justify-content-around">
-                            <img id="selectedIcon" class="position-absolute" style="margin-top: 85px;" />
-                            <i class="fa fa-user-circle fa-5x m-auto" style="font-size: 8em;" aria-hidden="true"></i>
+                            <div class="align-self-start" style="min-height: 200px; min-width: 200px; background-image: url('./assets/images/messages-bubble-square-flipped.png'); background-repeat: no-repeat; background-position: center; background-size: contain;">
+                                <p class="p-4">Hello!</p>
+                            </div>
+                            <div class="align-self-start d-flex justify-content-center">
+                                <img id="selectedIcon" class="position-absolute" style="margin-top: 85px;" />
+                                <i class="fa fa-user-circle fa-5x m-auto" style="font-size: 8em;" aria-hidden="true"></i>
+                            </div>
+                            <div style="min-height: 200px; min-width: 200px;">
+                                <div>
+                                    <h5>Available:</h5>
+                                    <div id="stockDropZone" class="p-3 border border-dark dropzone draggable-dropzone--occupied">
+                                        <div class="draggable">thing 1 - $50</div>
+                                        <div class="draggable">thing 2 - $20</div>
+                                        <div class="draggable">thing 3 - $10</div>
+                                        <div class="draggable">thing 4 - $100</div>
+                                    </div>
+                                </div>
+                                <div style="height: 80px; border-top: 5px solid brown; border-left: 5px solid brown; border-right: 5px solid brown;"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-around pt-5">
+                            <div style="min-width: 120px;">
+                                <i class="fa fa-hand-paper-o fa-5x fa-rotate-180" aria-hidden="true"></i>
+                            </div>
+                            <div class="" style="min-width: 120px;">
+                                <div class="p-3 border border-dark">
+                                    <p>Owed: $<span id="owed">0</span></p>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column justify-content-center" style="min-width: 120px;">
+                                <i class="fa fa-shopping-cart fa-3x m-auto" aria-hidden="true"></i>
+                                <div id="cartDropZone" class="p-3 border border-dark dropzone"></div>
+                            </div>
                         </div>
                     </div>
                     <div id="round1Members" class="d-flex justify-content-around flex-wrap">
@@ -155,7 +202,7 @@
                         </div>
                     </div>
                     <div id="round2Members" class="justify-content-around flex-wrap" style="display: none;">
-                        <div ></div>
+                        <div></div>
                         <div></div>
                         <div></div>
                         <div></div>
@@ -208,6 +255,19 @@
     var round = 1;
 
     $(document).ready(function (){
+        const droppable = new Droppable.default(document.querySelectorAll('.container-fluid'), {
+            draggable: '.draggable',
+            dropzone: '.dropzone'
+        });
+        droppable.on('drag:stop', (e) => {
+            console.log($(e.data.source).text());
+            $('#cartDropZone').removeClass('draggable-dropzone--occupied');
+            $('#stockDropZone').removeClass('draggable-dropzone--occupied')
+            var currentOwed = parseInt($('#owed').text());
+            $('#owed').text(currentOwed + parseInt($(e.data.source).text().split('$')[1]));
+            //TODO: REGENERATE AVAILABLE ITEMS
+        });
+
         $('#round').text(round);
 
         var skillBar = $("#communityFunds .inner");
