@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 
 <head>
 
@@ -19,31 +19,31 @@
 
     <!--draggable https://github.com/Shopify/draggable-->
     <!-- Entire bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.bundle.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.bundle.js"></script> -->
     <!-- legacy bundle for older browsers (IE11) -->
-    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.bundle.legacy.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.bundle.legacy.js"></script> -->
     <!-- Draggable only -->
     <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.js"></script>
     <!-- Sortable only -->
-    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/sortable.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/sortable.js"></script> -->
     <!-- Droppable only -->
     <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/droppable.js"></script>
     <!-- Swappable only -->
-    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/swappable.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/swappable.js"></script> -->
     <!-- Plugins only -->
-    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/plugins.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/plugins.js"></script> -->
 
     <link href="assets/css/index.css" type="text/css" rel="stylesheet">
 
 </head>
 
-<body>
+<body style="background-image: url('./assets/images/minecraft_village.png');background-repeat: no-repeat; background-size: cover; height: 100% !important;">
 
     <header>
     </header>
 
-    <main role="main">
-        <div class="container-fluid">
+    <main role="main" >
+        <div class="container-fluid" style="height: 100% !important;" >
             <div class="row">
                 <div class="col-2">
                     <h4 class="text-center">Community Reserves</h4>
@@ -83,21 +83,21 @@
                             <div style="min-height: 200px; min-width: 200px;">
                                 <div>
                                     <h5>Available:</h5>
-                                    <div id="stockDropZone" class="p-3 border border-dark dropzone draggable-dropzone--occupied">
-                                        <div class="draggable">thing 1 - $50</div>
-                                        <div class="draggable">thing 2 - $20</div>
-                                        <div class="draggable">thing 3 - $10</div>
-                                        <div class="draggable">thing 4 - $100</div>
+                                    <div id="stockDropZone" class="p-3 border border-dark dropzone">
                                     </div>
                                 </div>
                                 <div style="height: 80px; border-top: 5px solid brown; border-left: 5px solid brown; border-right: 5px solid brown;"></div>
                             </div>
                         </div>
                         <div class="d-flex justify-content-around pt-5">
-                            <div style="min-width: 120px;">
-                                <i class="fa fa-hand-paper-o fa-5x fa-rotate-180" aria-hidden="true"></i>
+                            <div id="success" class="position-absolute m-auto text-center" style="display: none;">
+                                <div class="alert alert-success">Item purchased successfully!</div>
                             </div>
-                            <div class="" style="min-width: 120px;">
+                            <div class="d-flex flex-column justify-content-center" style="min-width: 120px;">
+                                <i class="fa fa-hand-paper-o fa-5x fa-rotate-180 m-auto" aria-hidden="true"></i>
+                                <div id="owedDropZone" class="p-3 border border-dark dropzone"></div>
+                            </div>
+                            <div style="min-width: 120px;">
                                 <div class="p-3 border border-dark">
                                     <p>Owed: $<span id="owed">0</span></p>
                                 </div>
@@ -109,91 +109,91 @@
                         </div>
                     </div>
                     <div id="round1Members" class="d-flex justify-content-around flex-wrap">
-                        <div id="vegetableFarmer" data-name="Vegetable Farmer" data-icon="farming-farmer" class="user-icon">
-                            <p class="text-center p-0 m-auto">Vegetable Farmer</p>
+                        <div id="vegetableFarmer" data-name="Vegetable Farmer" data-icon="farming-farmer" data-forsale="Vegetables - $2000:Merchant," class="user-icon">
+                            <p class="text-center p-0 m-auto text-white">Vegetable Farmer</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/farming-farmer.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
+                                <i class="fa fa-user-circle fa-5x m-auto text-danger" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="riceFarmer" data-name="Rice Farmer" data-icon="farming-wheat" class="user-icon">
+                        <div id="riceFarmer" data-name="Rice Farmer" data-icon="farming-wheat" data-forsale="Rice - $2500:Outsider,Local Tobacco - $1000:Merchant" data-restrictions="I can only sell to: Outsider" class="user-icon">
                             <p class="text-center p-0 m-auto">Rice Farmer</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/farming-wheat.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="foodVendor" data-name="Food Vendor" data-icon="bread-loaf" class="user-icon">
+                        <div id="foodVendor" data-name="Food Vendor" data-icon="bread-loaf" data-forsale="Lunch - $4000:," class="user-icon">
                             <p class="text-center p-0 m-auto">Food Vendor</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/bread-loaf.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="herbalDoctor" data-name="Herbal Doctor" data-icon="hospital-first-aid" class="user-icon">
+                        <div id="herbalDoctor" data-name="Herbal Doctor" data-icon="hospital-first-aid" data-forsale="Herbal Medicine - $0:,Natural Dyes - $1000:,Natural Insecticide - $3000:" class="user-icon">
                             <p class="text-center p-0 m-auto">Herbal Doctor</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/hospital-first-aid.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="labourer" data-name="Labourer" data-icon="safety-helmet" class="user-icon">
+                        <div id="labourer" data-name="Labourer" data-icon="safety-helmet" data-forsale="Labour - $7000:,Traditional Homemade Noodles - $2000:Food Vendor" class="user-icon">
                             <p class="text-center p-0 m-auto">Labourer</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/safety-helmet.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="weaver" data-name="Weaver" data-icon="material-fabric" class="user-icon">
+                        <div id="weaver" data-name="Weaver" data-icon="material-fabric" data-forsale="Traditional Cloth - $5000:," class="user-icon">
                             <p class="text-center p-0 m-auto">Weaver</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/material-fabric.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="fisher" data-name="Fisher" data-icon="fishing-fish" class="user-icon">
+                        <div id="fisher" data-name="Fisher" data-icon="fishing-fish" data-forsale="Fish - $6000:Merchant," class="user-icon">
                             <p class="text-center p-0 m-auto">Fisher</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/fishing-fish.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="homemaker" data-name="Homemaker" data-icon="chef-gear-apron" class="user-icon">
+                        <div id="homemaker" data-name="Homemaker" data-icon="chef-gear-apron" data-forsale="Babysitting - $0:,Cotton - $1000:Outsider" class="user-icon">
                             <p class="text-center p-0 m-auto">Homemaker</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/chef-gear-apron.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="fruitFarmer" data-name="Fruit Farmer" data-icon="fruit-apple" class="user-icon">
+                        <div id="fruitFarmer" data-name="Fruit Farmer" data-icon="fruit-apple" data-forsale="Fruit - $6000:Merchant," class="user-icon">
                             <p class="text-center p-0 m-auto">Fruit Farmer</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/fruit-apple.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="mechanic" data-name="Mechanic" data-icon="tools-wench" class="user-icon">
+                        <div id="mechanic" data-name="Mechanic" data-icon="tools-wench" data-forsale="Fix engine - $12000:," class="user-icon">
                             <p class="text-center p-0 m-auto">Mechanic</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/tools-wench.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="merchant" data-name="Merchant" data-icon="shop-sale-1" class="user-icon">
+                        <div id="merchant" data-name="Merchant" data-icon="shop-sale-1" data-forsale="Fruit - $9000:,Garma Cigarettes - $3000:,Vegetables - $3000:,Local Tobacco - $1500:,Fish - $9000:" class="user-icon">
                             <p class="text-center p-0 m-auto">Merchant</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/shop-sale-1.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="moneyLender" data-name="Money Lender" data-icon="money-atm" class="user-icon">
+                        <div id="moneyLender" data-name="Money Lender" data-icon="money-atm" data-forsale="Money," class="user-icon">
                             <p class="text-center p-0 m-auto">Money Lender</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/money-atm.png" style="margin-top: 50px;" />
                                 <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
                             </div>
                         </div>
-                        <div id="outsider" data-name="Outsider" data-icon="single-man-profile-picture" class="user-icon">
+                        <div id="outsider" data-name="Outsider" data-icon="single-man-profile-picture" data-forsale="Factory Cloth - $10000:,Rice - $3500:,Garam Cigarettes - $2500,Chemical Insecticide - $8000:,IndoMie - $1000:,Factory Thread/Chemical Dyes - $3000:,Engine Parts - $7000:" class="user-icon">
                             <p class="text-center p-0 m-auto">Outsider</p>
                             <div class="d-flex justify-content-around">
                                 <img class="position-absolute" src="./assets/images/single-man-profile-picture.png" style="margin-top: 50px;" />
@@ -219,34 +219,52 @@
                     </div>
                 </div>
             </div>
-            
+            <div class="fixed-bottom bg-white border border-dark">
+                <button class="border-0 bg-white p-0 mr-1 float-right" type="button" data-toggle="collapse" data-target=".collapse-panel" aria-expanded="false" aria-controls="collapseFunds collapseObjectives collapseAcquired">
+                    <i id="collapseIcon" class="fa fa-chevron-up fa-2x" aria-hidden="true"></i>
+                </button>
+                <div class="row p-3">
+                    <div class="col-4 p-2 border border-dark">
+                        <h5 class="text-center">Funds</h5>
+                        <div class="collapse-panel collapse" id="collapseFunds">
+                            <div class="p-2">
+                                <div id="fundsDropZone" class="position-relative p-3 border border-dark dropzone draggable-dropzone--occupied">
+                                    <div class="draggable">$10</div>
+                                    <div class="draggable">$20</div>
+                                    <div class="draggable">$50</div>
+                                    <div class="draggable">$100</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 p-2 border border-dark">
+                        <h5 class="text-center">Objectives</h5>
+                        <div class="collapse-panel collapse" id="collapseObjectives">
+                            <div class="p-2">
+                                <div class="position-relative p-3 border border-dark">
+                                    <ul>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 p-2 border border-dark">
+                        <h5 class="text-center">Acquired</h5>
+                        <div class="collapse-panel collapse" id="collapseAcquired">
+                            <div class="p-2">
+                                <div id="acquired" class="position-relative p-3 border border-dark">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
-    <footer class="fixed-bottom bg-white border border-dark">
-        <button class="border-0 bg-white p-0 mr-1 float-right" type="button" data-toggle="collapse" data-target=".collapse-panel" aria-expanded="false" aria-controls="collapseFunds collapseObjectives collapseAcquired">
-            <i id="collapseIcon" class="fa fa-chevron-up fa-2x" aria-hidden="true"></i>
-        </button>
-        <div class="row p-3">
-            <div class="col-4 p-2 border border-dark">
-                <h5 class="text-center">Funds</h5>
-                <div class="collapse-panel collapse" id="collapseFunds">
-                    <div class="p-5"></div>
-                </div>
-            </div>
-            <div class="col-4 p-2 border border-dark">
-                <h5 class="text-center">Objectives</h5>
-                <div class="collapse-panel collapse" id="collapseObjectives">
-                    <div class="p-5"></div>
-                </div>
-            </div>
-            <div class="col-4 p-2 border border-dark">
-                <h5 class="text-center">Acquired</h5>
-                <div class="collapse-panel collapse" id="collapseAcquired">
-                    <div class="p-5"></div>
-                </div>
-            </div>
-        </div>
+    <footer>
     </footer>
 
 </body>
@@ -260,12 +278,27 @@
             dropzone: '.dropzone'
         });
         droppable.on('drag:stop', (e) => {
-            console.log($(e.data.source).text());
-            $('#cartDropZone').removeClass('draggable-dropzone--occupied');
-            $('#stockDropZone').removeClass('draggable-dropzone--occupied')
-            var currentOwed = parseInt($('#owed').text());
-            $('#owed').text(currentOwed + parseInt($(e.data.source).text().split('$')[1]));
-            //TODO: REGENERATE AVAILABLE ITEMS
+            // console.log($(e.data.source));
+            if(!$(e.data.source).text().includes("-")){
+                var currentOwed = parseInt($('#owed').text());
+                currentOwed = currentOwed - parseInt($(e.data.source).text().split('$')[1]);
+                $('#owed').text(currentOwed);
+                if(currentOwed == 0){
+                    var elements = $("#cartDropZone").children().each(function(){
+                        $("#acquired").append(this);
+                    });
+                    $('#owedDropZone').removeClass('draggable-dropzone--occupied');
+                    $("#owedDropZone").empty();
+                    $("#success").fadeIn(1000);
+                    $("#success").fadeOut(2000);
+                }
+            }else{
+                $('#cartDropZone').removeClass('draggable-dropzone--occupied');
+                $('#stockDropZone').removeClass('draggable-dropzone--occupied');
+                var currentOwed = parseInt($('#owed').text());
+                $('#owed').text(currentOwed + parseInt($(e.data.source).text().split('$')[1]));
+                //TODO: REGENERATE AVAILABLE ITEMS
+            }
         });
 
         $('#round').text(round);
@@ -288,6 +321,12 @@
         $('.user-icon').click(function(){
             $('#selectedTitle').text($(this).data('name'));
             $('#selectedIcon').attr('src', './assets/images/'+$(this).data('icon')+'.png');
+            
+            var forsale = $(this).data('forsale').split(',');
+            for(var e in forsale){
+                $('#stockDropZone').append("<div class='draggable'>"+forsale[e]+"</div>")
+            }
+            
             $('#round'+round+'Members').hide();
             $('#round'+round+'Members').removeClass('d-flex');
             $('#selectedMember').show("slide", { direction: "left" }, 500);
