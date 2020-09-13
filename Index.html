@@ -1,342 +1,721 @@
-<!DOCTYPE html>
-<html lang="en" >
 
-<head>
+<style>
+    #chartdiv {
+        width: 100%;
+        height: 1500px;
+    }
+</style>
+  
+<!-- Resources -->
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/maps.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/geodata/worldHigh.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
-    <meta charset="utf-8">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
-    <meta name="description" content="The Community Currency Role Play digital game">
-    <meta name="author" content="Tom Buurmans & Lachlan Keene">
+<script src="./assets/lib/jquery/jquery.js"></script>
+<script src="TotalTimelineDataset.js"></script>
 
-    <title>The Community Currency Role Play</title>
-
-    <script src='assets/lib/jquery/jquery.js'></script>
-    <script src='assets/lib/bootstrap/js/bootstrap.js'></script>
-    <link href="assets/lib/bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet">
-    <script src='assets/lib/jquery-ui/jquery-ui.js'></script>
-    <link href="assets/lib/jquery-ui/jquery-ui.css" type="text/css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/lib/font-awesome/css/font-awesome.min.css">
-
-    <!--draggable https://github.com/Shopify/draggable-->
-    <!-- Entire bundle -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.bundle.js"></script> -->
-    <!-- legacy bundle for older browsers (IE11) -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.bundle.legacy.js"></script> -->
-    <!-- Draggable only -->
-    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/draggable.js"></script>
-    <!-- Sortable only -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/sortable.js"></script> -->
-    <!-- Droppable only -->
-    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/droppable.js"></script>
-    <!-- Swappable only -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/swappable.js"></script> -->
-    <!-- Plugins only -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/plugins.js"></script> -->
-
-    <link href="assets/css/index.css" type="text/css" rel="stylesheet">
-
-</head>
-
-<body style="background-image: url('./assets/images/minecraft_village.png');background-repeat: no-repeat; background-size: cover; height: 100% !important;">
-
-    <header>
-    </header>
-
-    <main role="main" >
-        <div class="container-fluid" style="height: 100% !important;" >
-            <div class="row">
-                <div class="col-2">
-                    <h4 class="text-center">Community Reserves</h4>
-                    <div id="communityFunds" class="d-flex justify-content-center">
-                        <div class="outer">
-                            <div class="inner" data-progress="100%">
-                                <div></div>
-                            </div>        
-                        </div>
-                    </div>
-                    <h4 class="text-center mt-3">You</h4>
-                    <div id="tailor" class="d-flex flex-column justify-content-center">
-                        <div class="d-flex justify-content-around">
-                            <img class="position-absolute" src="./assets/images/clothes-design-tape-measure.png" style="margin-top: 50px;" />
-                            <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                        </div>
-                        <p class="text-center">Tailor</p>
-                    </div>
-                </div>
-                <div id="mainDisplay" class="col-10">
-                    <div class="">
-                        <h2 class="text-center">Round <span id="round"></span><i class="fa fa-question-circle-o" style="font-size: 0.5em;" aria-hidden="true"></i></h2>
-                    </div>
-                    <div id="selectedMember" style="display: none;">
-                        <div class="position-absolute float-left">
-                            <i id="back" class="fa fa-angle-double-left fa-3x" aria-hidden="true"></i>
-                        </div>
-                        <h5 class="text-center mt-5" id="selectedTitle"></h5>
-                        <div class="d-flex justify-content-around">
-                            <div class="align-self-start" style="min-height: 200px; min-width: 200px; background-image: url('./assets/images/messages-bubble-square-flipped.png'); background-repeat: no-repeat; background-position: center; background-size: contain;">
-                                <p class="p-4">Hello!</p>
-                            </div>
-                            <div class="align-self-start d-flex justify-content-center">
-                                <img id="selectedIcon" class="position-absolute" style="margin-top: 85px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" style="font-size: 8em;" aria-hidden="true"></i>
-                            </div>
-                            <div style="min-height: 200px; min-width: 200px;">
-                                <div>
-                                    <h5>Available:</h5>
-                                    <div id="stockDropZone" class="p-3 border border-dark dropzone">
-                                    </div>
-                                </div>
-                                <div style="height: 80px; border-top: 5px solid brown; border-left: 5px solid brown; border-right: 5px solid brown;"></div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-around pt-5">
-                            <div id="success" class="position-absolute m-auto text-center" style="display: none;">
-                                <div class="alert alert-success">Item purchased successfully!</div>
-                            </div>
-                            <div class="d-flex flex-column justify-content-center" style="min-width: 120px;">
-                                <i class="fa fa-hand-paper-o fa-5x fa-rotate-180 m-auto" aria-hidden="true"></i>
-                                <div id="owedDropZone" class="p-3 border border-dark dropzone"></div>
-                            </div>
-                            <div style="min-width: 120px;">
-                                <div class="p-3 border border-dark">
-                                    <p>Owed: $<span id="owed">0</span></p>
-                                </div>
-                            </div>
-                            <div class="d-flex flex-column justify-content-center" style="min-width: 120px;">
-                                <i class="fa fa-shopping-cart fa-3x m-auto" aria-hidden="true"></i>
-                                <div id="cartDropZone" class="p-3 border border-dark dropzone"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="round1Members" class="d-flex justify-content-around flex-wrap">
-                        <div id="vegetableFarmer" data-name="Vegetable Farmer" data-icon="farming-farmer" data-forsale="Vegetables - $2000:Merchant," class="user-icon">
-                            <p class="text-center p-0 m-auto text-white">Vegetable Farmer</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/farming-farmer.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto text-danger" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="riceFarmer" data-name="Rice Farmer" data-icon="farming-wheat" data-forsale="Rice - $2500:Outsider,Local Tobacco - $1000:Merchant" data-restrictions="I can only sell to: Outsider" class="user-icon">
-                            <p class="text-center p-0 m-auto">Rice Farmer</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/farming-wheat.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="foodVendor" data-name="Food Vendor" data-icon="bread-loaf" data-forsale="Lunch - $4000:," class="user-icon">
-                            <p class="text-center p-0 m-auto">Food Vendor</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/bread-loaf.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="herbalDoctor" data-name="Herbal Doctor" data-icon="hospital-first-aid" data-forsale="Herbal Medicine - $0:,Natural Dyes - $1000:,Natural Insecticide - $3000:" class="user-icon">
-                            <p class="text-center p-0 m-auto">Herbal Doctor</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/hospital-first-aid.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="labourer" data-name="Labourer" data-icon="safety-helmet" data-forsale="Labour - $7000:,Traditional Homemade Noodles - $2000:Food Vendor" class="user-icon">
-                            <p class="text-center p-0 m-auto">Labourer</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/safety-helmet.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="weaver" data-name="Weaver" data-icon="material-fabric" data-forsale="Traditional Cloth - $5000:," class="user-icon">
-                            <p class="text-center p-0 m-auto">Weaver</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/material-fabric.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="fisher" data-name="Fisher" data-icon="fishing-fish" data-forsale="Fish - $6000:Merchant," class="user-icon">
-                            <p class="text-center p-0 m-auto">Fisher</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/fishing-fish.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="homemaker" data-name="Homemaker" data-icon="chef-gear-apron" data-forsale="Babysitting - $0:,Cotton - $1000:Outsider" class="user-icon">
-                            <p class="text-center p-0 m-auto">Homemaker</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/chef-gear-apron.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="fruitFarmer" data-name="Fruit Farmer" data-icon="fruit-apple" data-forsale="Fruit - $6000:Merchant," class="user-icon">
-                            <p class="text-center p-0 m-auto">Fruit Farmer</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/fruit-apple.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="mechanic" data-name="Mechanic" data-icon="tools-wench" data-forsale="Fix engine - $12000:," class="user-icon">
-                            <p class="text-center p-0 m-auto">Mechanic</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/tools-wench.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="merchant" data-name="Merchant" data-icon="shop-sale-1" data-forsale="Fruit - $9000:,Garma Cigarettes - $3000:,Vegetables - $3000:,Local Tobacco - $1500:,Fish - $9000:" class="user-icon">
-                            <p class="text-center p-0 m-auto">Merchant</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/shop-sale-1.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="moneyLender" data-name="Money Lender" data-icon="money-atm" data-forsale="Money," class="user-icon">
-                            <p class="text-center p-0 m-auto">Money Lender</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/money-atm.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div id="outsider" data-name="Outsider" data-icon="single-man-profile-picture" data-forsale="Factory Cloth - $10000:,Rice - $3500:,Garam Cigarettes - $2500,Chemical Insecticide - $8000:,IndoMie - $1000:,Factory Thread/Chemical Dyes - $3000:,Engine Parts - $7000:" class="user-icon">
-                            <p class="text-center p-0 m-auto">Outsider</p>
-                            <div class="d-flex justify-content-around">
-                                <img class="position-absolute" src="./assets/images/single-man-profile-picture.png" style="margin-top: 50px;" />
-                                <i class="fa fa-user-circle fa-5x m-auto" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="round2Members" class="justify-content-around flex-wrap" style="display: none;">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                    </div>
-                </div>
-            </div>
-            <div class="fixed-bottom bg-white border border-dark">
-                <button class="border-0 bg-white p-0 mr-1 float-right" type="button" data-toggle="collapse" data-target=".collapse-panel" aria-expanded="false" aria-controls="collapseFunds collapseObjectives collapseAcquired">
-                    <i id="collapseIcon" class="fa fa-chevron-up fa-2x" aria-hidden="true"></i>
-                </button>
-                <div class="row p-3">
-                    <div class="col-4 p-2 border border-dark">
-                        <h5 class="text-center">Funds</h5>
-                        <div class="collapse-panel collapse" id="collapseFunds">
-                            <div class="p-2">
-                                <div id="fundsDropZone" class="position-relative p-3 border border-dark dropzone draggable-dropzone--occupied">
-                                    <div class="draggable">$10</div>
-                                    <div class="draggable">$20</div>
-                                    <div class="draggable">$50</div>
-                                    <div class="draggable">$100</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-4 p-2 border border-dark">
-                        <h5 class="text-center">Objectives</h5>
-                        <div class="collapse-panel collapse" id="collapseObjectives">
-                            <div class="p-2">
-                                <div class="position-relative p-3 border border-dark">
-                                    <ul>
-
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-4 p-2 border border-dark">
-                        <h5 class="text-center">Acquired</h5>
-                        <div class="collapse-panel collapse" id="collapseAcquired">
-                            <div class="p-2">
-                                <div id="acquired" class="position-relative p-3 border border-dark">
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-    </footer>
-
-</body>
-
+<!-- Chart code -->
 <script>
-    var round = 1;
+    var polygonSeries;
+    var polygonTemplate;
+
+    var maxPC;
+
+    am4core.ready(function() {
+    
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+        
+        
+        
+        var chart = am4core.create("chartdiv", am4maps.MapChart);
+        chart.height = am4core.percent(100);
+        
+        
+        try {
+            chart.geodata = am4geodata_worldHigh;
+        }
+        catch (e) {
+            chart.raiseCriticalError(new Error("Map geodata could not be loaded. Please download the latest <a href=\"https://www.amcharts.com/download/download-v4/\">amcharts geodata</a> and extract its contents into the same directory as your amCharts files."));
+        }
+        
+        chart.projection = new am4maps.projections.Miller();
+            
+        // zoomout on background click
+        chart.chartContainer.background.events.on("hit", function () { zoomOut() });
+        //chart.paddingBottom = 200;
+        var colorSet = new am4core.ColorSet();
+        var morphedPolygon;
+        
+        // map polygon series (countries)
+        polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+        polygonSeries.dataFields.value = "confirmedPC";
+        polygonSeries.useGeodata = true;
+        // specify which countries to Exclude
+        polygonSeries.exclude = ["AQ"]
+        polygonSeries.exceptPolygon
+
+        polygonSeries.data = updateMapData(polygonSeries.data);
+       
+        // country area look and behavior
+        polygonTemplate = polygonSeries.mapPolygons.template;
+        polygonTemplate.strokeOpacity = 1;
+        polygonTemplate.stroke = am4core.color("#afaa0a");
+        polygonTemplate.fillOpacity = 1;
+        polygonTemplate.tooltipText = "{name}"; 
+        // console.log(polygonTemplate);
+        
+        // desaturate filter for countries
+        var desaturateFilter = new am4core.DesaturateFilter();
+        desaturateFilter.saturation = 0.75;
+        polygonTemplate.filters.push(desaturateFilter);
+        
+
+
+        var backgroundColor = am4core.color("#1e2128");
+        var activeColor = am4core.color("#ff8726");
+        var confirmedColor = am4core.color("#d21a1a");
+        var recoveredColor = am4core.color("#45d21a");
+        var deathsColor = am4core.color("#1c5fe5");
+
+        var test = polygonSeries;
+
+        // console.log(test);
+        // for an easier access by key
+        var colors = { active: activeColor, confirmed: confirmedColor, recovered: recoveredColor, deaths: deathsColor };
+
+        // polygonSeries.heatRules.push({
+        //     "property": "fill",
+        //     "target": polygonTemplate,
+        //     "min": am4core.color("#ff0"),
+        //     "max": am4core.color("#f00"),
+        //     "dataField": "value"
+        // });
+        // polygonTemplate.adapter.add("fill", function (fill, target) {
+        //     console.log(target.dataItem.value);
+        //     console.log(target.dataItem.dataContext.confirmedPC);
+
+        //    // target.dataItem.value = 600;
+        //     if(target.dataItem.value >= 1){
+        //         return am4core.color("#ff0")
+        //     }else if(target.dataItem.value >= 0.0000110345885189562735){
+        //         return am4core.color("#ff0")
+        //     }else{
+        //         return am4core.color("#f00")
+        //     }
+        //     return fill;
+        // })
+        // polygonTemplate.adapter.add("fill", function (fill, target) {
+        //     console.log(target);
+        //    // target.dataItem.value = 600;
+        //     if(target.dataItem.dataContext.confirmedPC >= 1){
+        //         return am4core.color("#ff0")
+        //     }else if(target.dataItem.dataContext.confirmedPC >= 0.0000110345885189562735){
+        //         return am4core.color("#ff0")
+        //     }else{
+        //         return am4core.color("#f00")
+        //     }
+        //     return fill;
+        // })
+        
+        // set fillOpacity to 1 when hovered
+        var hoverState = polygonTemplate.states.create("hover");
+        hoverState.properties.fillOpacity = 1;
+        
+        // what to do when country is clicked
+        polygonTemplate.events.on("hit", function (event) {
+            event.target.zIndex = 1000000;
+            selectPolygon(event.target);
+        })
+        
+        // Pie chart
+        var pieChart = chart.seriesContainer.createChild(am4charts.PieChart);
+        // Set width/heigh of a pie chart for easier positioning only
+        pieChart.width = 100;
+        pieChart.height = 100;
+        pieChart.hidden = true; // can't use visible = false!
+        
+        // because defauls are 50, and it's not good with small countries
+        pieChart.chartContainer.minHeight = 1;
+        pieChart.chartContainer.minWidth = 1;
+        
+        var pieSeries = pieChart.series.push(new am4charts.PieSeries());
+        pieSeries.dataFields.value = "value";
+        pieSeries.dataFields.category = "category";
+        pieSeries.data = [{ value: 0, category: "Active" }, { value: 0, category: "Deaths" }, { value: 0, category: "Recovered" }];
+        
+        var dropShadowFilter = new am4core.DropShadowFilter();
+        dropShadowFilter.blur = 4;
+        pieSeries.filters.push(dropShadowFilter);
+        
+        var sliceTemplate = pieSeries.slices.template;
+        sliceTemplate.fillOpacity = 1;
+        sliceTemplate.strokeOpacity = 0;
+        
+        var activeState = sliceTemplate.states.getKey("active");
+        activeState.properties.shiftRadius = 0; // no need to pull on click, as country circle under the pie won't make it good
+        
+        var sliceHoverState = sliceTemplate.states.getKey("hover");
+        sliceHoverState.properties.shiftRadius = 0; // no need to pull on click, as country circle under the pie won't make it good
+        
+        // we don't need default pie chart animation, so change defaults
+        var hiddenState = pieSeries.hiddenState;
+        hiddenState.properties.startAngle = pieSeries.startAngle;
+        hiddenState.properties.endAngle = pieSeries.endAngle;
+        hiddenState.properties.opacity = 0;
+        hiddenState.properties.visible = false;
+        
+        // series labels
+        var labelTemplate = pieSeries.labels.template;
+        labelTemplate.nonScaling = true;
+        labelTemplate.fill = am4core.color("#FFFFFF");
+        labelTemplate.fontSize = 10;
+        labelTemplate.background = new am4core.RoundedRectangle();
+        labelTemplate.background.fillOpacity = 0.9;
+        labelTemplate.padding(4, 9, 4, 9);
+        labelTemplate.background.fill = am4core.color("#7678a0");
+        
+        // we need pie series to hide faster to avoid strange pause after country is clicked
+        pieSeries.hiddenState.transitionDuration = 200;
+        
+        // country label
+        var countryLabel = chart.chartContainer.createChild(am4core.Label);
+        countryLabel.text = "Select a country";
+        countryLabel.fill = am4core.color("#7678a0");
+        countryLabel.fontSize = 40;
+        
+        countryLabel.hiddenState.properties.dy = 1000;
+        countryLabel.defaultState.properties.dy = 0;
+        countryLabel.valign = "middle";
+        countryLabel.align = "right";
+        countryLabel.paddingRight = 50;
+        countryLabel.hide(0);
+        countryLabel.show();
+
+        var buttonsAndChartContainer = chart.createChild(am4core.Container);
+        buttonsAndChartContainer.layout = "vertical";
+        buttonsAndChartContainer.height = am4core.percent(25); // make this bigger if you want more space for the chart
+        buttonsAndChartContainer.width = am4core.percent(100);
+        buttonsAndChartContainer.valign = "bottom";
+        //buttonsAndChartContainer.paddingTop = 300;
+
+        //Start Bottom Time Slider and Graph
+
+        // Chart & slider container
+        var chartAndSliderContainer = buttonsAndChartContainer.createChild(am4core.Container);
+        chartAndSliderContainer.layout = "vertical";
+        chartAndSliderContainer.height = am4core.percent(100);
+        chartAndSliderContainer.width = am4core.percent(100);
+        chartAndSliderContainer.background = new am4core.RoundedRectangle();
+        chartAndSliderContainer.background.fill = am4core.color("#000000");
+        chartAndSliderContainer.background.cornerRadius(30, 30, 0, 0)
+        chartAndSliderContainer.background.fillOpacity = 0.25;
+        chartAndSliderContainer.paddingTop = 10;
+        chartAndSliderContainer.paddingBottom = 0;
+
+        // Slider container
+        var sliderContainer = chartAndSliderContainer.createChild(am4core.Container);
+        sliderContainer.width = am4core.percent(100);
+        sliderContainer.padding(0, 15, 15, 10);
+        sliderContainer.layout = "horizontal";
+
+        var slider = sliderContainer.createChild(am4core.Slider);
+        slider.width = am4core.percent(100);
+        slider.valign = "middle";
+        slider.background.opacity = 0.4;
+        slider.opacity = 0.7;
+        slider.background.fill = am4core.color("#ffffff");
+        slider.marginLeft = 20;
+        slider.marginRight = 35;
+        slider.height = 15;
+        slider.start = 1;
+        // var covid_world_timeline = [1];
+
+        slider.events.on("rangechanged", function(event) {
+            var selectedDate = new Date(dateMin + (slider.start * (dateMax - dateMin)));
+            
+            updateMapDataDate(selectedDate.getFullYear()+"-"+(selectedDate.getMonth()+1)+"-"+selectedDate.getDate(), polygonSeries._data);
+
+        });
+
+        
+
+        updateTotalChart();
+
+        var lineChart;
+
+        lineChart.legend = new am4charts.Legend();
+        lineChart.legend.parent = lineChart.plotContainer;
+        lineChart.legend.labels.template.fill = am4core.color("#ffffff");
+        lineChart.legend.markers.template.height = 8;
+        lineChart.legend.contentAlign = "left";
+        lineChart.legend.fontSize = "20px";
+        lineChart.legend.itemContainers.template.valign = "middle";
+        var legendDown = false;
+        lineChart.legend.itemContainers.template.events.on("down", function() {
+            legendDown = true;
+        })
+        lineChart.legend.itemContainers.template.events.on("up", function() {
+            setTimeout(function() {
+            legendDown = false;
+            }, 100)
+        })
+
+        function updateTotalChart(){
+
+            var dateMinDate = new Date(dateMin);
+            var dateMaxDate = new Date(dateMax);
+
+            var dateMinString = dateMinDate.getFullYear + '-' + dateMinDate.getMonth + '-' + dateMinDate.getDate;
+            var dateMaxString = dateMaxDate.getFullYear + '-' + dateMaxDate.getMonth + '-' + dateMaxDate.getDate;
+
+                lineChart = chartAndSliderContainer.createChild(am4charts.XYChart);
+                lineChart.fontSize = "0.8em";
+                // lineChart.paddingRight = 30;
+                // lineChart.paddingLeft = 30;
+                lineChart.maskBullets = false;
+                lineChart.zoomOutButton.disabled = true;
+                lineChart.paddingBottom = 5;
+                lineChart.paddingTop = 3;
+
+                var dateRangeCases = [];
+
+                
+                for(dt=dateMin; dt<=dateMax; dt = (dt+86400000)){
+                    var currentDate = new Date(dt);
+                    //  console.log('date: ' + currentDate);
+                    //  
+                    dateRangeCases.push({
+                        date: currentDate,
+                        active: getTotal('active', currentDate),
+                        confirmed: getTotal('confirmed', currentDate)
+                        });
+                }        
+            
+
+                lineChart.data = dateRangeCases;
+
+                var dateAxis = lineChart.xAxes.push(new am4charts.DateAxis());
+                dateAxis.renderer.minGridDistance = 50;
+                dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
+                dateAxis.renderer.grid.template.strokeOpacity = 0.25;
+                dateAxis.max = dateMax + am4core.time.getDuration("day", 5);
+                dateAxis.tooltip.label.fontSize = "0.8em";
+                dateAxis.tooltip.background.fill = activeColor;
+                dateAxis.tooltip.background.stroke = activeColor;
+                dateAxis.renderer.labels.template.fill = am4core.color("#f5424b");
+                var valueAxis = lineChart.yAxes.push(new am4charts.ValueAxis());
+                valueAxis.renderer.opposite = true;
+                valueAxis.renderer.labels.template.fill = am4core.color("#f5424b");
+
+        }
+
+        var activeSeries = addSeries("active", activeColor);
+        var columnSeries = addSeries("confirmed", activeColor);
+
+        
+
+        function addSeries(name, color) {
+                var series = lineChart.series.push(new am4charts.LineSeries());
+                series.strokeOpacity = 0.6;
+                series.stroke = am4core.color("blue").rgb;
+                series.fill = am4core.color("blue").rgb;
+                series.dataFields.valueY = name;
+                series.dataFields.dateX = "date";
+                
+               
+                series.name = name;
+                series.strokeOpacity = 0.6;                
+                series.maskBullets = false;
+                series.minBulletDistance = 10;
+                series.hidden = false;
+                series.hideTooltipWhileZooming = true;
+
+
+                // series bullet
+                var bullet = series.bullets.push(new am4charts.CircleBullet());
+
+                // only needed to pass it to circle
+                var bulletHoverState = bullet.states.create("hover");
+                bullet.setStateOnChildren = true;
+
+                bullet.circle.fillOpacity = 1;
+                bullet.circle.fill = backgroundColor;
+                bullet.circle.radius = 2;
+
+                var circleHoverState = bullet.circle.states.create("hover");
+                circleHoverState.properties.fillOpacity = 1;
+                circleHoverState.properties.fill = am4core.color("blue").rgb;
+                circleHoverState.properties.scale = 1.4;
+
+                // tooltip setup
+                series.tooltip.pointerOrientation = "down";
+                series.tooltip.getStrokeFromObject = true;
+                series.tooltip.getFillFromObject = false;
+                series.tooltip.background.fillOpacity = 0.2;
+                series.tooltip.background.fill = am4core.color("#000000");
+                series.tooltip.dy = -4;
+                series.tooltip.fontSize = "0.8em";
+                series.tooltipText = "Total {name}: {valueY}";
+
+                return series;
+        }
+
+
+        function getTotal(type, date){
+            var dateF = date.getFullYear() + '-' + ((date.getMonth() < 10) ? ('0' + (date.getMonth()+1)) : date.getMonth() + 1) + '-' + ((date.getDate() < 10) ? ('0' + (date.getDate())) : date.getDate());
+
+            for(i = 0; i < summaryDataSet.length; i++){
+
+                if(dateF === summaryDataSet[i].date){
+
+                    if(type === 'active'){
+                        return summaryDataSet[i].confirmed - summaryDataSet[i].deaths - summaryDataSet[i].recovered;
+                    }
+                    else if(type === 'confirmed'){
+                        return summaryDataSet[i].confirmed;
+                    }
+                    else if(type === 'recovered'){
+                        return summaryDataSet[i].recovered;
+                    } else {
+                        return summaryDataSet[i].deaths;
+                    }
+
+                    
+                }
+            }      
+
+
+            return 0;
+        }
+
+
+
+        // select polygon
+        function selectPolygon(polygon) {
+            if (morphedPolygon != polygon) {
+                var animation = pieSeries.hide();
+                if (animation) {
+                    animation.events.on("animationended", function () {
+                        morphToCircle(polygon);
+                    })
+                }
+                else {
+                    morphToCircle(polygon);
+                }
+            }
+        }
+                
+        // fade out all countries except selected
+        function fadeOut(exceptPolygon) {
+            for (var i = 0; i < polygonSeries.mapPolygons.length; i++) {
+                var polygon = polygonSeries.mapPolygons.getIndex(i);
+                if (polygon != exceptPolygon) {
+                    polygon.defaultState.properties.fillOpacity = 1.0;
+                    polygon.animate([{ property: "fillOpacity", to: 1.0 }, { property: "strokeOpacity", to: 1 }], polygon.polygon.morpher.morphDuration);
+                }
+            }
+        }
+        
+        function zoomOut() {
+            if (morphedPolygon) {
+                pieSeries.hide();
+                morphBack();
+                fadeOut();
+                countryLabel.hide();
+                morphedPolygon = undefined;
+            }
+        }
+        
+        function morphBack() {
+            if (morphedPolygon) {
+                morphedPolygon.polygon.morpher.morphBack();
+                var dsf = morphedPolygon.filters.getIndex(0);
+                dsf.animate({ property: "saturation", to: 0.75 }, morphedPolygon.polygon.morpher.morphDuration);
+            }
+        }
+        
+        function morphToCircle(polygon) {
+        
+        
+            var animationDuration = polygon.polygon.morpher.morphDuration;
+            // if there is a country already morphed to circle, morph it back
+            morphBack();
+            // morph polygon to circle
+            polygon.toFront();
+            polygon.polygon.morpher.morphToSingle = true;
+            var morphAnimation = polygon.polygon.morpher.morphToCircle();
+        
+            polygon.strokeOpacity = 0; // hide stroke for lines not to cross countries
+        
+            polygon.defaultState.properties.fillOpacity = 1;
+            polygon.animate({ property: "fillOpacity", to: 1 }, animationDuration);
+        
+            // animate desaturate filter
+            var filter = polygon.filters.getIndex(0);
+            filter.animate({ property: "saturation", to: 1 }, animationDuration);
+        
+            // save currently morphed polygon
+            morphedPolygon = polygon;
+        
+            // fade out all other
+            fadeOut(polygon);
+        
+            // hide country label
+            countryLabel.hide();
+        
+            if (morphAnimation) {
+                morphAnimation.events.on("animationended", function () {
+                    zoomToCountry(polygon);
+                })
+            }
+            else {
+                zoomToCountry(polygon);
+            }
+        }
+        
+        function zoomToCountry(polygon) {
+            var zoomAnimation = chart.zoomToMapObject(polygon, 2.2, true);
+            if (zoomAnimation) {
+                zoomAnimation.events.on("animationended", function () {
+                    showPieChart(polygon);
+                })
+            }
+            else {
+                showPieChart(polygon);
+            }
+        }
+        
+        
+        function showPieChart(polygon) {
+            polygon.polygon.measure();
+            var radius = polygon.polygon.measuredWidth / 2 * polygon.globalScale / chart.seriesContainer.scale;
+            pieChart.width = radius * 2;
+            pieChart.height = radius * 2;
+            pieChart.radius = radius;
+        
+            var centerPoint = am4core.utils.spritePointToSvg(polygon.polygon.centerPoint, polygon.polygon);
+            centerPoint = am4core.utils.svgPointToSprite(centerPoint, chart.seriesContainer);
+        
+            pieChart.x = centerPoint.x - radius;
+            pieChart.y = centerPoint.y - radius;
+           // polygon.fill = am4core.color("ffffff");
+            var fill = polygon.fill;
+            var desaturated = fill.saturate(0.75);
+        
+            // console.log(polygon.dataItem._dataContext.name);
+
+            var summary = getCountrySummaryData(polygon.dataItem._dataContext.id);
+
+            for (var i = 0; i < pieSeries.dataItems.length; i++) {
+                
+                var dataItem = pieSeries.dataItems.getIndex(i);
+                if(i == 0){
+                    dataItem.value = summary.TotalConfirmed - summary.TotalDeaths - summary.TotalRecovered;
+                    // dataItem.slice.fill = am4core.color(am4core.colors.interpolate(
+                    //     fill.rgb,
+                    //     am4core.color("blue").rgb,
+                    //     0.2 * i
+                    // ));
+                    dataItem.slice.fill = am4core.color("blue").rgb;
+                }else if(i == 1){
+                    dataItem.value = summary.TotalDeaths;
+                    // dataItem.slice.fill = am4core.color(am4core.colors.interpolate(
+                    //     fill.rgb,
+                    //     am4core.color("red").rgb,
+                    //     0.2 * i
+                    // ));
+                    dataItem.slice.fill = am4core.color("red").rgb;
+
+                }else{
+                    dataItem.value = summary.TotalRecovered;
+                    // dataItem.slice.fill = am4core.color(am4core.colors.interpolate(
+                    //     fill.rgb,
+                    //     am4core.color("green").rgb,
+                    //     0.2 * i
+                    // ));
+                    dataItem.slice.fill = am4core.color("green").rgb;
+
+                }
+        
+                dataItem.label.background.fill = desaturated;
+                dataItem.tick.stroke = fill;
+            }
+        
+            pieSeries.show();
+            pieChart.show();
+        
+            countryLabel.text = "{name}";
+            countryLabel.dataItem = polygon.dataItem;
+            countryLabel.fill = desaturated;
+            countryLabel.show();
+        }
+    
+    
+    }); // end am4core.ready()
+
+
+    
+
+    // DATA RETREIVE CODE
+
+    var summaryData;
+    var dateMin = Date.parse("22 January 2020");
+    var dateMax = Date.now() - 86400000;
 
     $(document).ready(function (){
-        const droppable = new Droppable.default(document.querySelectorAll('.container-fluid'), {
-            draggable: '.draggable',
-            dropzone: '.dropzone'
-        });
-        droppable.on('drag:stop', (e) => {
-            // console.log($(e.data.source));
-            if(!$(e.data.source).text().includes("-")){
-                var currentOwed = parseInt($('#owed').text());
-                currentOwed = currentOwed - parseInt($(e.data.source).text().split('$')[1]);
-                $('#owed').text(currentOwed);
-                if(currentOwed == 0){
-                    var elements = $("#cartDropZone").children().each(function(){
-                        $("#acquired").append(this);
-                    });
-                    $('#owedDropZone').removeClass('draggable-dropzone--occupied');
-                    $("#owedDropZone").empty();
-                    $("#success").fadeIn(1000);
-                    $("#success").fadeOut(2000);
-                }
-            }else{
-                $('#cartDropZone').removeClass('draggable-dropzone--occupied');
-                $('#stockDropZone').removeClass('draggable-dropzone--occupied');
-                var currentOwed = parseInt($('#owed').text());
-                $('#owed').text(currentOwed + parseInt($(e.data.source).text().split('$')[1]));
-                //TODO: REGENERATE AVAILABLE ITEMS
+        $.getJSON('https://api.covid19api.com/summary',  // url
+            function (data, textStatus, jqXHR) {  // success callback
+                summaryData = data;
+                // console.log("got summary data");
+                // updateMapData(polygonSeries._data);
+                // console.log(getCountrySummaryData("New Zealand"));
             }
-        });
-
-        $('#round').text(round);
-
-        var skillBar = $("#communityFunds .inner");
-        var skillVal = skillBar.attr("data-progress");
-        $(skillBar).animate({
-            height: skillVal
-        }, 1500);
-
-        $('#collapseFunds').on('show.bs.collapse', function () {
-            $('#collapseIcon').removeClass('fa-chevron-up');
-            $('#collapseIcon').addClass('fa-chevron-down');
-        });
-        $('#collapseFunds').on('hide.bs.collapse', function () {
-            $('#collapseIcon').addClass('fa-chevron-up');
-            $('#collapseIcon').removeClass('fa-chevron-down');
-        });
-
-        $('.user-icon').click(function(){
-            $('#selectedTitle').text($(this).data('name'));
-            $('#selectedIcon').attr('src', './assets/images/'+$(this).data('icon')+'.png');
-            
-            var forsale = $(this).data('forsale').split(',');
-            for(var e in forsale){
-                $('#stockDropZone').append("<div class='draggable'>"+forsale[e]+"</div>")
-            }
-            
-            $('#round'+round+'Members').hide();
-            $('#round'+round+'Members').removeClass('d-flex');
-            $('#selectedMember').show("slide", { direction: "left" }, 500);
-        });
-
-        $('#back').click(function(){
-            $('#selectedMember').hide("slide", { direction: "left" }, 500, function() {
-                $('#round'+round+'Members').show();
-                $('#round'+round+'Members').addClass('d-flex');
-            });
-        });
+        );
     });
+
+    function getData(){
+        if(!summaryData) return;
+        return summaryData;
+    }
+
+    function findCountry(country){
+        return country.CountryCode.toString() == this;
+    }
+
+    function getCountrySummaryData(country){
+        return summaryData.Countries.find(findCountry, country);
+    }
+    
+    function updateMapData(countries){
+        maxPC = 0;
+
+        if(!summaryData) return;
+        for (var c in countries){
+            var di = countries[c];
+            var polygon = polygonSeries.getPolygonById(di.id);
+            // console.log(polygon);
+            // iterate through the countries adding the totalActivePC (per capita) for each found country from the API
+            try{
+                var countryData = getCountrySummaryData(countries[c].id);
+                var amount1 = (countryData.TotalConfirmed - countryData.TotalRecovered - countryData.TotalDeaths)/parseInt(populations[countries[c].id]) * 1000000;
+                if(amount1 <= 0){
+                    polygon.dataItem.dataContext.confirmedPC = 0;
+                }else{
+                    polygon.dataItem.dataContext.confirmedPC = amount1;
+                }
+                
+                if(amount1 > maxPC){
+                    maxPC = amount1;
+                }
+                
+                //soz: polygonSeries.template.
+            }catch(e){
+                polygon.dataItem.dataContext.confirmedPC = 0;
+                // console.log("Country not found");
+            }
+            
+            // am4core.color("#ff0")
+            
+        }
+
+        for (var c in countries){
+            var di = countries[c];
+            var polygon = polygonSeries.getPolygonById(di.id);
+
+            polygon.fill = am4core.color(getColorForPercentage((polygon.dataItem.dataContext.confirmedPC/maxPC)*1010));
+        }
+
+        if(!countries){
+            return summaryData;
+        } else {
+            return countries;
+        }
+    }
+
+    function findDate(date){
+        return date.toString() == this;
+    }
+    function getCountrySummaryDataDate(date, country){
+        return byCountryDataSet.find(findDate, date).find(findCountry, country);
+    }
+
+    function updateMapDataDate(date, countries){
+        maxPC = 0;
+
+        if(!summaryData) return;
+        for (var c in countries){
+            var di = countries[c];
+            var polygon = polygonSeries.getPolygonById(di.id);
+            // console.log(polygon);
+            try{
+                var countryData = getCountrySummaryDataDate(date, countries[c].id);
+                console.log(countryData);
+                var amount1 = (countryData.TotalConfirmed - countryData.TotalRecovered - countryData.TotalDeaths)/parseInt(populations[countries[c].id]) * 1000000;
+                if(amount1 <= 0){
+                    polygon.dataItem.dataContext.confirmedPC = 0;
+                }else{
+                    polygon.dataItem.dataContext.confirmedPC = amount1;
+                }
+                
+                if(amount1 > maxPC){
+                    maxPC = amount1;
+                }
+                
+                //soz: polygonSeries.template.
+            }catch(e){
+                polygon.dataItem.dataContext.confirmedPC = 0;
+                console.log(e);
+            }
+            
+            // am4core.color("#ff0")
+            
+        }
+
+        for (var c in countries){
+            var di = countries[c];
+            var polygon = polygonSeries.getPolygonById(di.id);
+
+            polygon.fill = am4core.color(getColorForPercentage((polygon.dataItem.dataContext.confirmedPC/maxPC)*1010));
+        }
+
+        if(!date && !countries){
+            return summaryData;
+        } else {
+            return countries;
+        }
+    }
+
+    var percentColors = [
+    { pct: 0.0, color: { r: 0x00 , g: 0xff, b: 0 } },
+    { pct: 0.2, color: { r: 0xff, g: 0xff, b: 0 } },
+    { pct: 1.0, color: { r: 0xff, g: 0x00, b: 0 }  } ];
+
+    function getColorForPercentage(pct){
+        for (var i = 1; i < percentColors.length - 1; i++) {
+        if (pct < percentColors[i].pct) {
+            break;
+        }
+    }
+    var lower = percentColors[i - 1];
+    var upper = percentColors[i];
+    var range = upper.pct - lower.pct;
+    var rangePct = (pct - lower.pct) / range;
+    var pctLower = 1 - rangePct;
+    var pctUpper = rangePct;
+    var color = {
+        r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+        g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+        b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+    };
+    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+    // or output as hex if preferred
+    }
 </script>
+  
+<!-- HTML -->
+
+<div id="chartdiv"></div>
