@@ -26,6 +26,9 @@
     function formatDate(date){
         return date.getFullYear()+"-"+(date.getMonth()+1).toString().padStart(2, 0)+"-"+date.getDate().toString().padStart(2, 0);
     }
+    function formatDateFancy(date){
+        return date.getDate().toString().padStart(2, 0)+"-"+(date.getMonth()+1).toString().padStart(2, 0)+"-"+date.getFullYear();
+    }
 
     am4core.ready(function() {
     
@@ -41,6 +44,7 @@
         chart.zoomControl.align = "right";
         chart.zoomControl.marginRight = 15;
         chart.zoomControl.valign = "middle";
+        chart.zoomControl.paddingTop = 320;
         chart.zoomControl.minusButton.events.on("hit", zoomOut);
 
         
@@ -79,16 +83,16 @@
         
         // desaturate filter for countries
         var desaturateFilter = new am4core.DesaturateFilter();
-        desaturateFilter.saturation = 0.25;
+        desaturateFilter.saturation = 0.50;
         polygonTemplate.filters.push(desaturateFilter);
         
 
 
         var backgroundColor = am4core.color("#1e2128");
-        var activeColor = am4core.color("#ff8726");
-        var confirmedColor = am4core.color("#d21a1a");
-        var recoveredColor = am4core.color("#45d21a");
-        var deathsColor = am4core.color("#1c5fe5");
+        var activeColor = am4core.color("#ffff99");
+        var confirmedColor = am4core.color("#e55f04");
+        var recoveredColor = am4core.color("#bfff7f");
+        var deathsColor = am4core.color("#666666");
 
         var test = polygonSeries;
 
@@ -211,23 +215,21 @@
         var dataLabel = chart.chartContainer.createChild(am4core.Label);
         //var cuDate = new Date(selectedDate);
         dataLabel.fill = am4core.color("#7678a0");
-        dataLabel.fontSize = 40;
+        dataLabel.fontSize = 20;
         //dataLabel.hiddenState.properties.dy = 1000;
         dataLabel.defaultState.properties.dy = 0;
         dataLabel.valign = "middle";
+        dataLabel.paddingTop = 340;
         dataLabel.align = "left";
-        dataLabel.paddingRight = 50;
+        dataLabel.marginLeft = 20;
         slider.events.on("rangechanged", function(event) {
             zoomOut();
             selectedDate = new Date(dateMin + (slider.start * (dateMax - dateMin)));            
             updateMapDataDate(formatDate(selectedDate), polygonSeries._data);
-            dataLabel.text = formatDate(selectedDate);
+            dataLabel.text = "Date: " + formatDateFancy(selectedDate);
             $("#id-181-title").text(dataLabel.text);
             updateChartData();
         });
-
-
-
 
         updateTotalChart();
 
@@ -430,7 +432,7 @@
             if (morphedPolygon) {
                 morphedPolygon.polygon.morpher.morphBack();
                 var dsf = morphedPolygon.filters.getIndex(0);
-                dsf.animate({ property: "saturation", to: 0.75 }, morphedPolygon.polygon.morpher.morphDuration);
+                dsf.animate({ property: "saturation", to: 0.5 }, morphedPolygon.polygon.morpher.morphDuration);
             }
         }
         
@@ -500,7 +502,7 @@
             pieChart.y = centerPoint.y - radius;
            // polygon.fill = am4core.color("ffffff");
             var fill = polygon.fill;
-            var desaturated = fill.saturate(0.75);
+            var desaturated = fill.saturate(0.50);
         
             // console.log(polygon.dataItem._dataContext.name);
 
@@ -511,14 +513,14 @@
                 var dataItem = pieSeries.dataItems.getIndex(i);
                 if(i == 0){
                     dataItem.value = summary.confirmed - summary.deaths - summary.recovered;
-                    dataItem.slice.fill = am4core.color("orange").rgb;
+                    dataItem.slice.fill = activeColor.rgb
                 }else if(i == 1){
                     dataItem.value = summary.deaths;
-                    dataItem.slice.fill = am4core.color("red").rgb;
+                    dataItem.slice.fill = deathsColor.rgb;
 
                 }else{
                     dataItem.value = summary.recovered;
-                    dataItem.slice.fill = am4core.color("yellow").rgb;
+                    dataItem.slice.fill = recoveredColor.rgb;
 
                 }
         
