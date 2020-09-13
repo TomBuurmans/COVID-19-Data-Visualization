@@ -2,7 +2,7 @@
 <style>
     #chartdiv {
         width: 100%;
-        height: 1500px;
+        height: 1000px;
     }
 </style>
   
@@ -23,6 +23,10 @@
 
     var maxPC;
 
+    function formatDate(date){
+        return date.getFullYear()+"-"+(date.getMonth()+1).toString().padStart(2, 0)+"-"+date.getDate().toString().padStart(2, 0);
+    }
+
     am4core.ready(function() {
     
         // Themes begin
@@ -33,7 +37,12 @@
         
         var chart = am4core.create("chartdiv", am4maps.MapChart);
         chart.height = am4core.percent(100);
-        
+        chart.zoomControl = new am4maps.ZoomControl();
+        chart.zoomControl.align = "right";
+        chart.zoomControl.marginRight = 15;
+        chart.zoomControl.valign = "middle";
+        chart.zoomControl.minusButton.events.on("hit", zoomOut);
+
         
         try {
             chart.geodata = am4geodata_worldHigh;
@@ -58,19 +67,19 @@
         polygonSeries.exclude = ["AQ"]
         polygonSeries.exceptPolygon
 
-        polygonSeries.data = updateMapData(polygonSeries.data);
+        polygonSeries.data = updateMapDataDate(formatDate(new Date()), polygonSeries.data);
        
         // country area look and behavior
         polygonTemplate = polygonSeries.mapPolygons.template;
         polygonTemplate.strokeOpacity = 1;
         polygonTemplate.stroke = am4core.color("#afaa0a");
         polygonTemplate.fillOpacity = 1;
-        polygonTemplate.tooltipText = "{name}"; 
+        polygonTemplate.tooltipText = "{name}: ({active} active cases)"; 
         // console.log(polygonTemplate);
         
         // desaturate filter for countries
         var desaturateFilter = new am4core.DesaturateFilter();
-        desaturateFilter.saturation = 0.75;
+        desaturateFilter.saturation = 0.25;
         polygonTemplate.filters.push(desaturateFilter);
         
 
@@ -83,43 +92,8 @@
 
         var test = polygonSeries;
 
-        // console.log(test);
         // for an easier access by key
         var colors = { active: activeColor, confirmed: confirmedColor, recovered: recoveredColor, deaths: deathsColor };
-
-        // polygonSeries.heatRules.push({
-        //     "property": "fill",
-        //     "target": polygonTemplate,
-        //     "min": am4core.color("#ff0"),
-        //     "max": am4core.color("#f00"),
-        //     "dataField": "value"
-        // });
-        // polygonTemplate.adapter.add("fill", function (fill, target) {
-        //     console.log(target.dataItem.value);
-        //     console.log(target.dataItem.dataContext.confirmedPC);
-
-        //    // target.dataItem.value = 600;
-        //     if(target.dataItem.value >= 1){
-        //         return am4core.color("#ff0")
-        //     }else if(target.dataItem.value >= 0.0000110345885189562735){
-        //         return am4core.color("#ff0")
-        //     }else{
-        //         return am4core.color("#f00")
-        //     }
-        //     return fill;
-        // })
-        // polygonTemplate.adapter.add("fill", function (fill, target) {
-        //     console.log(target);
-        //    // target.dataItem.value = 600;
-        //     if(target.dataItem.dataContext.confirmedPC >= 1){
-        //         return am4core.color("#ff0")
-        //     }else if(target.dataItem.dataContext.confirmedPC >= 0.0000110345885189562735){
-        //         return am4core.color("#ff0")
-        //     }else{
-        //         return am4core.color("#f00")
-        //     }
-        //     return fill;
-        // })
         
         // set fillOpacity to 1 when hovered
         var hoverState = polygonTemplate.states.create("hover");
@@ -197,11 +171,9 @@
 
         var buttonsAndChartContainer = chart.createChild(am4core.Container);
         buttonsAndChartContainer.layout = "vertical";
-        buttonsAndChartContainer.height = am4core.percent(25); // make this bigger if you want more space for the chart
+        buttonsAndChartContainer.height = am4core.percent(30); // make this bigger if you want more space for the chart
         buttonsAndChartContainer.width = am4core.percent(100);
         buttonsAndChartContainer.valign = "bottom";
-        //buttonsAndChartContainer.paddingTop = 300;
-
         //Start Bottom Time Slider and Graph
 
         // Chart & slider container
@@ -216,6 +188,8 @@
         chartAndSliderContainer.paddingTop = 10;
         chartAndSliderContainer.paddingBottom = 0;
 
+
+
         // Slider container
         var sliderContainer = chartAndSliderContainer.createChild(am4core.Container);
         sliderContainer.width = am4core.percent(100);
@@ -229,19 +203,31 @@
         slider.opacity = 0.7;
         slider.background.fill = am4core.color("#ffffff");
         slider.marginLeft = 20;
-        slider.marginRight = 35;
+        slider.marginRight = 150;
         slider.height = 15;
         slider.start = 1;
-        // var covid_world_timeline = [1];
-
+        // slider.tooltipText = "hi";
+        var selectedDate = new Date(dateMax);
+        var dataLabel = chart.chartContainer.createChild(am4core.Label);
+        //var cuDate = new Date(selectedDate);
+        dataLabel.fill = am4core.color("#7678a0");
+        dataLabel.fontSize = 40;
+        //dataLabel.hiddenState.properties.dy = 1000;
+        dataLabel.defaultState.properties.dy = 0;
+        dataLabel.valign = "middle";
+        dataLabel.align = "left";
+        dataLabel.paddingRight = 50;
         slider.events.on("rangechanged", function(event) {
-            var selectedDate = new Date(dateMin + (slider.start * (dateMax - dateMin)));
-            
-            updateMapDataDate(selectedDate.getFullYear()+"-"+(selectedDate.getMonth()+1)+"-"+selectedDate.getDate(), polygonSeries._data);
-
+            zoomOut();
+            selectedDate = new Date(dateMin + (slider.start * (dateMax - dateMin)));            
+            updateMapDataDate(formatDate(selectedDate), polygonSeries._data);
+            dataLabel.text = formatDate(selectedDate);
+            $("#id-181-title").text(dataLabel.text);
+            updateChartData();
         });
 
-        
+
+
 
         updateTotalChart();
 
@@ -269,65 +255,71 @@
             var dateMinDate = new Date(dateMin);
             var dateMaxDate = new Date(dateMax);
 
-            var dateMinString = dateMinDate.getFullYear + '-' + dateMinDate.getMonth + '-' + dateMinDate.getDate;
-            var dateMaxString = dateMaxDate.getFullYear + '-' + dateMaxDate.getMonth + '-' + dateMaxDate.getDate;
+            var dateMinString = formatDate(dateMinDate);
+            var dateMaxString = formatDate(dateMaxDate);
 
                 lineChart = chartAndSliderContainer.createChild(am4charts.XYChart);
                 lineChart.fontSize = "0.8em";
-                // lineChart.paddingRight = 30;
-                // lineChart.paddingLeft = 30;
+                lineChart.paddingRight = 30;
+                lineChart.paddingLeft = 30;
                 lineChart.maskBullets = false;
                 lineChart.zoomOutButton.disabled = true;
                 lineChart.paddingBottom = 5;
                 lineChart.paddingTop = 3;
-
-                var dateRangeCases = [];
-
-                
-                for(dt=dateMin; dt<=dateMax; dt = (dt+86400000)){
-                    var currentDate = new Date(dt);
-                    //  console.log('date: ' + currentDate);
-                    //  
-                    dateRangeCases.push({
-                        date: currentDate,
-                        active: getTotal('active', currentDate),
-                        confirmed: getTotal('confirmed', currentDate)
-                        });
-                }        
             
-
-                lineChart.data = dateRangeCases;
-
+                updateChartData();               
+                
                 var dateAxis = lineChart.xAxes.push(new am4charts.DateAxis());
-                dateAxis.renderer.minGridDistance = 50;
+                dateAxis.renderer.minGridDistance = 40;
                 dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
                 dateAxis.renderer.grid.template.strokeOpacity = 0.25;
                 dateAxis.max = dateMax + am4core.time.getDuration("day", 5);
                 dateAxis.tooltip.label.fontSize = "0.8em";
                 dateAxis.tooltip.background.fill = activeColor;
                 dateAxis.tooltip.background.stroke = activeColor;
-                dateAxis.renderer.labels.template.fill = am4core.color("#f5424b");
+                dateAxis.renderer.labels.template.fill = am4core.color("#000000");
                 var valueAxis = lineChart.yAxes.push(new am4charts.ValueAxis());
                 valueAxis.renderer.opposite = true;
-                valueAxis.renderer.labels.template.fill = am4core.color("#f5424b");
+                valueAxis.renderer.labels.template.fill = am4core.color("#000000");
+
+        }
+
+        function updateChartData(){
+
+            var dateRangeCases = [];
+
+            for(dt=dateMin; dt<=selectedDate; dt = (dt+86400000)){
+                    var currentDate = new Date(dt);
+                    dateRangeCases.push({
+                        date: currentDate,
+                        active: getTotal('active', currentDate),
+                        confirmed: getTotal('confirmed', currentDate),
+                        recovered: getTotal('recovered', currentDate),
+                        deaths: getTotal('deaths', currentDate)
+                        });
+            } 
+
+            lineChart.data = dateRangeCases;
 
         }
 
         var activeSeries = addSeries("active", activeColor);
-        var columnSeries = addSeries("confirmed", activeColor);
+        var confirmedSeries = addSeries("confirmed", confirmedColor);
+        var recoveredSeries = addSeries("recovered", recoveredColor);
+        var deathSeries = addSeries("deaths", deathsColor);
 
         
 
         function addSeries(name, color) {
                 var series = lineChart.series.push(new am4charts.LineSeries());
                 series.strokeOpacity = 0.6;
-                series.stroke = am4core.color("blue").rgb;
-                series.fill = am4core.color("blue").rgb;
+                series.stroke = color;
+                series.fill = color;
                 series.dataFields.valueY = name;
                 series.dataFields.dateX = "date";
                 
                
-                series.name = name;
+                series.name = capitalizeFirstLetter(name);
                 series.strokeOpacity = 0.6;                
                 series.maskBullets = false;
                 series.minBulletDistance = 10;
@@ -348,7 +340,7 @@
 
                 var circleHoverState = bullet.circle.states.create("hover");
                 circleHoverState.properties.fillOpacity = 1;
-                circleHoverState.properties.fill = am4core.color("blue").rgb;
+                circleHoverState.properties.fill = color;
                 circleHoverState.properties.scale = 1.4;
 
                 // tooltip setup
@@ -390,6 +382,10 @@
 
 
             return 0;
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
 
@@ -508,36 +504,21 @@
         
             // console.log(polygon.dataItem._dataContext.name);
 
-            var summary = getCountrySummaryData(polygon.dataItem._dataContext.id);
+            var summary = getCountrySummaryDataDate(formatDate(selectedDate), polygon.dataItem._dataContext.id);
 
             for (var i = 0; i < pieSeries.dataItems.length; i++) {
                 
                 var dataItem = pieSeries.dataItems.getIndex(i);
                 if(i == 0){
-                    dataItem.value = summary.TotalConfirmed - summary.TotalDeaths - summary.TotalRecovered;
-                    // dataItem.slice.fill = am4core.color(am4core.colors.interpolate(
-                    //     fill.rgb,
-                    //     am4core.color("blue").rgb,
-                    //     0.2 * i
-                    // ));
-                    dataItem.slice.fill = am4core.color("blue").rgb;
+                    dataItem.value = summary.confirmed - summary.deaths - summary.recovered;
+                    dataItem.slice.fill = am4core.color("orange").rgb;
                 }else if(i == 1){
-                    dataItem.value = summary.TotalDeaths;
-                    // dataItem.slice.fill = am4core.color(am4core.colors.interpolate(
-                    //     fill.rgb,
-                    //     am4core.color("red").rgb,
-                    //     0.2 * i
-                    // ));
+                    dataItem.value = summary.deaths;
                     dataItem.slice.fill = am4core.color("red").rgb;
 
                 }else{
-                    dataItem.value = summary.TotalRecovered;
-                    // dataItem.slice.fill = am4core.color(am4core.colors.interpolate(
-                    //     fill.rgb,
-                    //     am4core.color("green").rgb,
-                    //     0.2 * i
-                    // ));
-                    dataItem.slice.fill = am4core.color("green").rgb;
+                    dataItem.value = summary.recovered;
+                    dataItem.slice.fill = am4core.color("yellow").rgb;
 
                 }
         
@@ -555,7 +536,7 @@
         }
     
     
-    }); // end am4core.ready()
+    });
 
 
     
@@ -566,120 +547,114 @@
     var dateMin = Date.parse("22 January 2020");
     var dateMax = Date.now() - 86400000;
 
-    $(document).ready(function (){
-        $.getJSON('https://api.covid19api.com/summary',  // url
-            function (data, textStatus, jqXHR) {  // success callback
-                summaryData = data;
-                // console.log("got summary data");
-                // updateMapData(polygonSeries._data);
-                // console.log(getCountrySummaryData("New Zealand"));
-            }
-        );
-    });
+    // $(document).ready(function (){
+    //     $.getJSON('https://api.covid19api.com/summary',  // url
+    //         function (data, textStatus, jqXHR) {  // success callback
+    //             summaryData = data;
+    //         }
+    //     );
+    // });
+    // function getData(){
+    //     if(!summaryData) return;
+    //     return summaryData;
+    // }
+    // function findCountry(country){
+    //     return country.CountryCode.toString() == this;
+    // }
+    // function getCountrySummaryData(country){
+    //     return summaryData.Countries.find(findCountry, country);
+    // }
+    // function updateMapData(countries){
+    //     maxPC = 0;
+    //     if(!summaryData) return;
+    //     for (var c in countries){
+    //         var di = countries[c];
+    //         var polygon = polygonSeries.getPolygonById(di.id);
+    //         try{
+    //             var countryData = getCountrySummaryData(countries[c].id);
+    //             var amount1 = (countryData.TotalConfirmed - countryData.TotalRecovered - countryData.TotalDeaths)/parseInt(populations[countries[c].id]) * 1000000;
+    //             if(amount1 <= 0){
+    //                 polygon.dataItem.dataContext.confirmedPC = 0;
+    //             }else{
+    //                 polygon.dataItem.dataContext.confirmedPC = amount1;
+    //             }
+    //             var active = (countryData.TotalConfirmed - countryData.TotalRecovered - countryData.TotalDeaths);
+    //             if(active <= 0){
+    //                 polygon.dataItem.dataContext.active = 0;
+    //             }else{
+    //                 polygon.dataItem.dataContext.active = active;
+    //             }
+    //             if(amount1 > maxPC){
+    //                 maxPC = amount1;
+    //             } 
+    //         }catch(e){
+    //             polygon.dataItem.dataContext.confirmedPC = 0;
+    //             polygon.dataItem.dataContext.active = 0;
+    //         }            
+    //     }
+        
+    //     for (var c in countries){
+    //         var di = countries[c];
+    //         var polygon = polygonSeries.getPolygonById(di.id);
+    //         polygon.fill = am4core.color(getColorForPercentage((polygon.dataItem.dataContext.confirmedPC/maxPC)*1010));
+    //     }
 
-    function getData(){
-        if(!summaryData) return;
-        return summaryData;
+    //     if(!countries){
+    //         return summaryData;
+    //     } else {
+    //         return countries;
+    //     }
+    // }
+
+    function findCountry2(country){
+        return country.id.toString() == this;
     }
-
-    function findCountry(country){
-        return country.CountryCode.toString() == this;
-    }
-
-    function getCountrySummaryData(country){
-        return summaryData.Countries.find(findCountry, country);
-    }
-    
-    function updateMapData(countries){
-        maxPC = 0;
-
-        if(!summaryData) return;
-        for (var c in countries){
-            var di = countries[c];
-            var polygon = polygonSeries.getPolygonById(di.id);
-            // console.log(polygon);
-            // iterate through the countries adding the totalActivePC (per capita) for each found country from the API
-            try{
-                var countryData = getCountrySummaryData(countries[c].id);
-                var amount1 = (countryData.TotalConfirmed - countryData.TotalRecovered - countryData.TotalDeaths)/parseInt(populations[countries[c].id]) * 1000000;
-                if(amount1 <= 0){
-                    polygon.dataItem.dataContext.confirmedPC = 0;
-                }else{
-                    polygon.dataItem.dataContext.confirmedPC = amount1;
-                }
-                
-                if(amount1 > maxPC){
-                    maxPC = amount1;
-                }
-                
-                //soz: polygonSeries.template.
-            }catch(e){
-                polygon.dataItem.dataContext.confirmedPC = 0;
-                // console.log("Country not found");
-            }
-            
-            // am4core.color("#ff0")
-            
-        }
-
-        for (var c in countries){
-            var di = countries[c];
-            var polygon = polygonSeries.getPolygonById(di.id);
-
-            polygon.fill = am4core.color(getColorForPercentage((polygon.dataItem.dataContext.confirmedPC/maxPC)*1010));
-        }
-
-        if(!countries){
-            return summaryData;
-        } else {
-            return countries;
-        }
-    }
-
     function findDate(date){
-        return date.toString() == this;
+        return date.date.toString() === this.toString();
     }
     function getCountrySummaryDataDate(date, country){
-        return byCountryDataSet.find(findDate, date).find(findCountry, country);
+        var dateObj = byCountryDataSet.find(findDate, date);
+        return dateObj.list.find(findCountry2, country);
     }
 
     function updateMapDataDate(date, countries){
         maxPC = 0;
-
-        if(!summaryData) return;
+ 
         for (var c in countries){
+            // console.log(c);
             var di = countries[c];
             var polygon = polygonSeries.getPolygonById(di.id);
-            // console.log(polygon);
             try{
                 var countryData = getCountrySummaryDataDate(date, countries[c].id);
-                console.log(countryData);
-                var amount1 = (countryData.TotalConfirmed - countryData.TotalRecovered - countryData.TotalDeaths)/parseInt(populations[countries[c].id]) * 1000000;
+                var amount1 = (countryData.confirmed - countryData.recovered - countryData.deaths)/parseInt(populations[countries[c].id]) * 1000000;
+                
                 if(amount1 <= 0){
                     polygon.dataItem.dataContext.confirmedPC = 0;
                 }else{
                     polygon.dataItem.dataContext.confirmedPC = amount1;
                 }
+
+                var active = (countryData.confirmed - countryData.recovered - countryData.deaths);
+                if(active <= 0){
+                    polygon.dataItem.dataContext.active = 0;
+                }else{
+                    polygon.dataItem.dataContext.active = active;
+                }
                 
                 if(amount1 > maxPC){
                     maxPC = amount1;
                 }
-                
-                //soz: polygonSeries.template.
             }catch(e){
                 polygon.dataItem.dataContext.confirmedPC = 0;
-                console.log(e);
+                polygon.dataItem.dataContext.active = 0;
             }
-            
-            // am4core.color("#ff0")
-            
         }
 
         for (var c in countries){
             var di = countries[c];
             var polygon = polygonSeries.getPolygonById(di.id);
-
-            polygon.fill = am4core.color(getColorForPercentage((polygon.dataItem.dataContext.confirmedPC/maxPC)*1010));
+            var percentage = (polygon.dataItem.dataContext.confirmedPC/maxPC);
+            polygon.fill = am4core.color(getColorForPercentage(percentage));
         }
 
         if(!date && !countries){
@@ -712,10 +687,8 @@
         b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
     };
     return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
-    // or output as hex if preferred
     }
 </script>
   
-<!-- HTML -->
 
 <div id="chartdiv"></div>
