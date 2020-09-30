@@ -27,6 +27,8 @@
 
     var maxPC;
 
+    var isStart = true;
+
     function formatDate(date){
         return date.getFullYear()+"-"+(date.getMonth()+1).toString().padStart(2, 0)+"-"+date.getDate().toString().padStart(2, 0);
     }
@@ -75,7 +77,7 @@
         polygonSeries.exclude = ["AQ"]
         polygonSeries.exceptPolygon
 
-        polygonSeries.data = updateMapDataDate(formatDate(new Date()), polygonSeries.data);
+        polygonSeries.data = updateMapDataDate(formatDate(new Date(dateMax)), polygonSeries.data);
        
         // country area look and behavior
         polygonTemplate = polygonSeries.mapPolygons.template;
@@ -228,15 +230,17 @@
         dataLabel.marginLeft = 20;
         slider.events.on("rangechanged", function(event) {
             zoomOut();
-            var newselectedDate = new Date(dateMin + (slider.start * (dateMax - dateMin))); 
-            if(formatDate(newselectedDate) !== formatDate(selectedDate)){
+            var newselectedDate = new Date(dateMin + (slider.start * (dateMax - dateMin)));
+            if((formatDate(newselectedDate) !== formatDate(selectedDate)) || isStart){
                 selectedDate = newselectedDate;
                 updateMapDataDate(formatDate(selectedDate), polygonSeries._data);
                 dataLabel.text = "Date: " + formatDateFancy(selectedDate);
                 $("#id-181-title").text(dataLabel.text);
+                isStart = false;
             }
         });
 
+       
         
 
         slider.events.on("up", function(event){
@@ -657,6 +661,7 @@
                     maxPC = amount1;
                 }
             }catch(e){
+                console.log(e);
                 polygon.dataItem.dataContext.confirmedPC = 0;
                 polygon.dataItem.dataContext.active = 0;
             }
@@ -674,6 +679,8 @@
         } else {
             return countries;
         }
+
+        slider.dispatchImmediately("rangechanged");
     }
 
     var percentColors = [
