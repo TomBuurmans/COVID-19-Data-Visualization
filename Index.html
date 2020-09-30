@@ -21,6 +21,10 @@
     var polygonSeries;
     var polygonTemplate;
 
+    var dataLabel;
+
+    var selectedDate;
+
     var maxPC;
 
     function formatDate(date){
@@ -211,8 +215,8 @@
         slider.height = 15;
         slider.start = 1;
         // slider.tooltipText = "hi";
-        var selectedDate = new Date(dateMax);
-        var dataLabel = chart.chartContainer.createChild(am4core.Label);
+        selectedDate = new Date(dateMax);
+        dataLabel = chart.chartContainer.createChild(am4core.Label);
         //var cuDate = new Date(selectedDate);
         dataLabel.fill = am4core.color("#7678a0");
         dataLabel.fontSize = 20;
@@ -224,10 +228,18 @@
         dataLabel.marginLeft = 20;
         slider.events.on("rangechanged", function(event) {
             zoomOut();
-            selectedDate = new Date(dateMin + (slider.start * (dateMax - dateMin)));            
-            updateMapDataDate(formatDate(selectedDate), polygonSeries._data);
-            dataLabel.text = "Date: " + formatDateFancy(selectedDate);
-            $("#id-181-title").text(dataLabel.text);
+            var newselectedDate = new Date(dateMin + (slider.start * (dateMax - dateMin))); 
+            if(formatDate(newselectedDate) !== formatDate(selectedDate)){
+                selectedDate = newselectedDate;
+                updateMapDataDate(formatDate(selectedDate), polygonSeries._data);
+                dataLabel.text = "Date: " + formatDateFancy(selectedDate);
+                $("#id-181-title").text(dataLabel.text);
+            }
+        });
+
+        
+
+        slider.events.on("up", function(event){
             updateChartData();
         });
 
@@ -298,7 +310,7 @@
                         confirmed: getTotal('confirmed', currentDate),
                         recovered: getTotal('recovered', currentDate),
                         deaths: getTotal('deaths', currentDate)
-                        });
+                    });
             } 
 
             lineChart.data = dateRangeCases;
@@ -539,15 +551,13 @@
     
     
     });
-
-
     
 
     // DATA RETREIVE CODE
 
     var summaryData;
     var dateMin = Date.parse("22 January 2020");
-    var dateMax = Date.now() - 86400000;
+    var dateMax = Date.parse("13 September 2020") - 86400000;
 
     // $(document).ready(function (){
     //     $.getJSON('https://api.covid19api.com/summary',  // url
